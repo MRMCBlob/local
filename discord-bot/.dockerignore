@@ -1,0 +1,49 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Git files
+.git
+.gitignore
+
+# Documentation
+README.md
+SETUP_TROUBLESHOOTING.md
+
+# Environment files
+.env
+.env.example
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+.nyc_output
+coverage
+
+# Database files (will be created in container)
+data/
+*.db
+*.sqlite
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+
+# Development files
+.eslintrc.*
+.prettierrc.*
+docker-compose.yml
+docker-compose.override.yml
+
+# Package manager files that shouldn't be copied
+package-lock.json
+yarn.lock

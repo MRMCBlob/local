@@ -1,0 +1,69 @@
+{
+  "leveling": {
+    "xpPerMessage": 15,
+    "xpCooldown": 60000,
+    "baseXpRequired": 100,
+    "xpMultiplier": 1.5,
+    "boosterRoleId": "YOUR_BOOSTER_ROLE_ID_HERE",
+    "boosterXpMultiplier": 2.0
+  },
+  "roleRewards": {
+    "10": {
+      "roleId": "YOUR_LEVEL_10_ROLE_ID_HERE",
+      "name": "Level 10 Adventurer",
+      "description": "Reached level 10! You're getting started!"
+    },
+    "20": {
+      "roleId": "YOUR_LEVEL_20_ROLE_ID_HERE",
+      "name": "Level 20 Explorer", 
+      "description": "Reached level 20! You're exploring well!"
+    },
+    "30": {
+      "roleId": "YOUR_LEVEL_30_ROLE_ID_HERE",
+      "name": "Level 30 Veteran",
+      "description": "Reached level 30! You're a veteran member!"
+    },
+    "40": {
+      "roleId": "YOUR_LEVEL_40_ROLE_ID_HERE",
+      "name": "Level 40 Champion",
+      "description": "Reached level 40! You're a true champion!"
+    },
+    "50": {
+      "roleId": "YOUR_LEVEL_50_ROLE_ID_HERE",
+      "name": "Level 50 Legend",
+      "description": "Reached level 50! You're a legend!"
+    }
+  },
+  "messages": {
+    "levelUp": {
+      "title": "🎉 Level Up!",
+      "color": 65280,
+      "footer": "Keep chatting to earn more XP!"
+    },
+    "level": {
+      "color": 255,
+      "noDataTitle": "❌ No Data Found",
+      "errorTitle": "❌ Error"
+    },
+    "leaderboard": {
+      "color": 255,
+      "title": "📊 {guildName} Leaderboard",
+      "medals": ["🥇", "🥈", "🥉"]
+    },
+    "botMention": {
+      "color": 65416,
+      "title": "👋 Hey there!",
+      "tips": [
+        "💡 Use `/level` to check your current level and XP progress!",
+        "📊 Use `/leaderboard` to see who's leading in XP on this server!",
+        "🚀 Send messages to gain XP and level up! (1 minute cooldown between XP gains)",
+        "🎯 Each level requires exponentially more XP - the grind gets real!",
+        "🏆 Reach levels 10, 20, 30, 40, or 50 to unlock special role rewards!",
+        "📈 Check your detailed progress with level bars and XP breakdowns!",
+        "⚡ Higher levels are prestigious achievements - show off your dedication!",
+        "🎮 Keep chatting and engaging with the community to climb the ranks!",
+        "🚀 Get the booster role for 2x XP and level up twice as fast!"
+      ]
+    }
+  }
+}
