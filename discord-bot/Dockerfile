@@ -4,15 +4,18 @@ FROM node:18-alpine
 # Set the working directory in the container
 WORKDIR /app
 
+# Install build dependencies for native modules like better-sqlite3
+RUN apk add --no-cache python3 make g++
+
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Copy package.json and pnpm-lock.yaml (if available)
+# Copy package.json and workspace files
 COPY package.json ./
-COPY pnpm-lock.yaml* ./
+COPY pnpm-workspace.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile --prod
+# Install dependencies (remove frozen-lockfile since we don't have a lock file)
+RUN pnpm install --prod
 
 # Copy the rest of the application code
 COPY src/ ./src/

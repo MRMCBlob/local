@@ -390,6 +390,29 @@ class LevelingBot {
                         ephemeral: true
                     });
                 }
+            } else if (interaction.customId.startsWith('color_select_')) {
+                const userId = interaction.customId.split('_')[2];
+                
+                // Check if the user who clicked the menu is the same as who initiated it
+                if (interaction.user.id !== userId) {
+                    return interaction.reply({
+                        content: '❌ This color picker menu is not for you!',
+                        ephemeral: true
+                    });
+                }
+
+                const selectedColorKey = interaction.values[0];
+                
+                // Import and call the color picker handler
+                const colorCommand = this.client.commands.get('colorpicker');
+                if (colorCommand && colorCommand.handleColorSelection) {
+                    await colorCommand.handleColorSelection(interaction, selectedColorKey);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Color picker functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
             }
         } catch (error) {
             console.error('Error handling select menu:', error);
