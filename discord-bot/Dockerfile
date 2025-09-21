@@ -20,6 +20,7 @@ RUN pnpm install --prod
 # Copy the rest of the application code
 COPY src/ ./src/
 COPY config.json ./
+COPY fishing_config.json ./
 
 # Create data directory for SQLite database with proper permissions
 RUN mkdir -p /app/data

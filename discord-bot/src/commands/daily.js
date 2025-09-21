@@ -1,7 +1,9 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import pkg from 'discord.js';
+const { SlashCommandBuilder, EmbedBuilder } = pkg;
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { FishingRNG } from '../systems/fishing_rng.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -61,12 +63,22 @@ export async function execute(interaction, database) {
         const streakBonus = (reward - baseAmount);
         const maxStreak = config.gambling.dailyReward.maxStreak;
 
+        // Give daily bait rewards
+        const baitRewards = FishingRNG.giveDailyBait(userId);
+        const baitText = Object.entries(baitRewards)
+            .map(([baitType, amount]) => {
+                const baitInfo = FishingRNG.getBaitInfo(baitType);
+                return `${baitInfo.emoji} ${amount}x ${baitInfo.name}`;
+            })
+            .join('\n');
+
         const embed = new EmbedBuilder()
             .setTitle('🎁 Daily Reward Claimed!')
             .setDescription(
-                `💰 **Reward:** ${reward} coins\n` +
+                `💰 **Coin Reward:** ${reward} coins\n` +
                 `🔥 **Current Streak:** ${streak} day${streak !== 1 ? 's' : ''}\n` +
                 `💳 **New Balance:** ${newBalance} coins\n\n` +
+                `🪱 **Daily Bait:**\n${baitText}\n\n` +
                 `💎 **Base Reward:** ${baseAmount} coins\n` +
                 (streakBonus > 0 ? `🔥 **Streak Bonus:** +${streakBonus} coins\n` : '') +
                 `📈 **Max Streak:** ${maxStreak} days`

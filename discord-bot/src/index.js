@@ -1,6 +1,8 @@
-import { Client, GatewayIntentBits, Events, Collection } from 'discord.js';
+import pkg from 'discord.js';
+const { Client, GatewayIntentBits, Events, Collection, EmbedBuilder } = pkg;
 import { config } from 'dotenv';
 import { LevelingDatabase } from './database/database.js';
+import { FishingRNG } from './systems/fishing_rng.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readdirSync, readFileSync } from 'fs';
@@ -47,6 +49,7 @@ class LevelingBot {
         });
 
         this.database = new LevelingDatabase(process.env.DATABASE_PATH || './data/leveling.db');
+        this.fishingRNG = FishingRNG;
         this.client.commands = new Collection();
         this.userCooldowns = new Map();
         this.config = botConfig;
@@ -123,6 +126,8 @@ class LevelingBot {
                 }
             } else if (interaction.isStringSelectMenu()) {
                 await this.handleSelectMenu(interaction);
+            } else if (interaction.isButton()) {
+                await this.handleButtonInteraction(interaction);
             }
         });
 
@@ -237,7 +242,14 @@ class LevelingBot {
                 });
             }
 
-            await message.channel.send({ embeds: [levelUpEmbed] });
+            const levelUpMessage = await message.channel.send({ embeds: [levelUpEmbed] });
+            
+            // Delete the level up message after 4 seconds
+            setTimeout(() => {
+                levelUpMessage.delete().catch(err => {
+                    console.log('Could not delete level up message:', err.message);
+                });
+            }, 4000);
 
             // Handle level rewards
             await this.handleLevelRewards(message.member, newLevel);
@@ -279,6 +291,142 @@ class LevelingBot {
             }
         } catch (error) {
             console.error('Error handling level rewards:', error);
+        }
+    }
+
+    async handleButtonInteraction(interaction) {
+        try {
+            if (interaction.customId.startsWith('gambling_')) {
+                const gamblingCommand = this.client.commands.get('gambling');
+                if (gamblingCommand && gamblingCommand.handleButtonInteraction) {
+                    await gamblingCommand.handleButtonInteraction(interaction, this.database);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Gambling functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('shop_')) {
+                const shopCommand = this.client.commands.get('shop');
+                if (shopCommand && shopCommand.handleButtonInteraction) {
+                    await shopCommand.handleButtonInteraction(interaction, this.database);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Shop functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('color_')) {
+                const colorCommand = this.client.commands.get('colorpicker');
+                if (colorCommand && colorCommand.handleButtonInteraction) {
+                    await colorCommand.handleButtonInteraction(interaction);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Color picker functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('fish_')) {
+                const fishCommand = this.client.commands.get('fish');
+                if (fishCommand && fishCommand.handleButtonInteraction) {
+                    await fishCommand.handleButtonInteraction(interaction, this.database);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Fishing functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('sell_')) {
+                const sellCommand = this.client.commands.get('sell');
+                if (sellCommand && sellCommand.handleButtonInteraction) {
+                    await sellCommand.handleButtonInteraction(interaction, this.database);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Sell functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('view_')) {
+                // Handle view inventory button
+                if (interaction.customId.startsWith('view_inventory_')) {
+                    const fishCommand = this.client.commands.get('fish');
+                    if (fishCommand && fishCommand.handleButtonInteraction) {
+                        await fishCommand.handleButtonInteraction(interaction, this.database);
+                    } else {
+                        await interaction.reply({
+                            content: '❌ Inventory functionality is currently unavailable.',
+                            ephemeral: true
+                        });
+                    }
+                } else if (interaction.customId === 'view_bait') {
+                    // Handle view bait button
+                    const userId = interaction.user.id;
+                    const baitSummary = this.fishingRNG.getBaitSummary(userId);
+                    
+                    const embed = new EmbedBuilder()
+                        .setTitle('🪱 Your Bait Inventory')
+                        .setColor('#8BC34A')
+                        .setTimestamp();
+
+                    if (baitSummary.total_bait === 0) {
+                        embed.setDescription('You don\'t have any bait! Use `/daily` to get free bait or buy some from `/shop bait`.');
+                    } else {
+                        embed.setDescription(`**Total Bait:** ${baitSummary.total_bait} pieces\n\n**Your Bait:**`);
+                        
+                        const baitList = baitSummary.bait_types.map(bait => 
+                            `${bait.emoji} **${bait.name}**: ${bait.amount}x\n   ${bait.description}`
+                        ).join('\n\n');
+                        
+                        embed.addFields({
+                            name: '🎒 Inventory',
+                            value: baitList,
+                            inline: false
+                        });
+                    }
+
+                    await interaction.reply({ embeds: [embed], ephemeral: true });
+                } else if (interaction.customId === 'view_inventory') {
+                    // Handle generic view inventory
+                    const fishCommand = this.client.commands.get('fish');
+                    if (fishCommand && fishCommand.handleButtonInteraction) {
+                        await fishCommand.handleButtonInteraction(interaction, this.database);
+                    } else {
+                        await interaction.reply({
+                            content: '❌ Inventory functionality is currently unavailable.',
+                            ephemeral: true
+                        });
+                    }
+                }
+            } else if (interaction.customId.startsWith('check_balance_')) {
+                // Handle balance check button
+                const balanceCommand = this.client.commands.get('balance');
+                if (balanceCommand) {
+                    await balanceCommand.execute(interaction, this.database);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Balance functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else {
+                // Handle other button interactions as needed
+                await interaction.reply({
+                    content: '❌ Unknown button interaction.',
+                    ephemeral: true
+                });
+            }
+        } catch (error) {
+            console.error('Error handling button interaction:', error);
+            const errorMessage = {
+                content: '❌ An error occurred while processing your button interaction.',
+                ephemeral: true
+            };
+
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp(errorMessage);
+            } else {
+                await interaction.reply(errorMessage);
+            }
         }
     }
 
@@ -387,6 +535,30 @@ class LevelingBot {
                 } else {
                     await interaction.reply({
                         content: '❌ Use functionality is currently unavailable.',
+                        ephemeral: true
+                    });
+                }
+            } else if (interaction.customId.startsWith('bait_buy_')) {
+                const userId = interaction.customId.split('_')[2];
+                
+                // Check if the user who clicked the menu is the same as who initiated it
+                if (interaction.user.id !== userId) {
+                    return interaction.reply({
+                        content: '❌ This bait shop menu is not for you!',
+                        ephemeral: true
+                    });
+                }
+
+                const selectedBaitValue = interaction.values[0];
+                const baitType = selectedBaitValue.replace('bait_', '');
+                
+                // Import and call the bait purchase handler
+                const shopCommand = this.client.commands.get('shop');
+                if (shopCommand && shopCommand.handleBaitPurchase) {
+                    await shopCommand.handleBaitPurchase(interaction, this.database, baitType);
+                } else {
+                    await interaction.reply({
+                        content: '❌ Bait shop functionality is currently unavailable.',
                         ephemeral: true
                     });
                 }

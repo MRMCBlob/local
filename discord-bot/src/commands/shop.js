@@ -1,7 +1,9 @@
-import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } from 'discord.js';
+import pkg from 'discord.js';
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, StringSelectMenuBuilder } = pkg;
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { FishingRNG } from '../systems/fishing_rng.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +29,10 @@ export const data = new SlashCommandBuilder()
         subcommand
             .setName('buy')
             .setDescription('Purchase an item from the shop'))
+    .addSubcommand(subcommand =>
+        subcommand
+            .setName('bait')
+            .setDescription('Browse and purchase fishing bait'))
     .addSubcommand(subcommand =>
         subcommand
             .setName('inventory')
@@ -59,6 +65,9 @@ export async function execute(interaction, database) {
             
             case 'buy':
                 return await handleBuy(interaction, database, guildId, userId);
+
+            case 'bait':
+                return await handleBait(interaction, database, guildId, userId);
             
             case 'inventory':
                 return await handleInventory(interaction, database, guildId, userId);
@@ -79,6 +88,93 @@ export async function execute(interaction, database) {
         console.error('Error in shop command:', error);
         return interaction.reply({
             content: '❌ An error occurred while processing your request.',
+            flags: 64 // EPHEMERAL
+        });
+    }
+}
+
+async function handleBait(interaction, database, guildId, userId) {
+    // Check and refresh bait stock if needed
+    FishingRNG.checkShopBaitReset();
+    
+    // Get available bait from shop
+    const availableBait = FishingRNG.getShopBaitStock();
+    const baitEntries = Object.entries(availableBait);
+    
+    if (baitEntries.length === 0) {
+        return interaction.reply({
+            content: '🎣 No bait is currently available for purchase.',
+            flags: 64 // EPHEMERAL
+        });
+    }
+
+    // Get user's current balance
+    const economy = database.upsertEconomy(userId, guildId);
+    const userMoney = economy ? economy.money : 0;
+
+    const embed = new EmbedBuilder()
+        .setTitle('🎣 Bait Shop')
+        .setDescription('Purchase high-quality bait to improve your fishing success!\n\n💰 **Your Balance:** ' + userMoney + ' coins')
+        .setColor('#4CAF50')
+        .setTimestamp();
+
+    let baitDescription = '';
+    const baitOptions = [];
+
+    baitEntries.forEach(([baitType, baitData]) => {
+        if (baitData.current_stock > 0) {
+            const affordableQty = Math.floor(userMoney / baitData.shop_price);
+            const maxPurchase = Math.min(affordableQty, baitData.current_stock);
+            
+            baitDescription += `${baitData.emoji} **${baitData.name}**\n`;
+            baitDescription += `   💰 Price: ${baitData.shop_price} coins each\n`;
+            baitDescription += `   📦 Stock: ${baitData.current_stock} available\n`;
+            baitDescription += `   📝 ${baitData.description}\n`;
+            
+            if (maxPurchase > 0) {
+                baitDescription += `   ✅ You can buy up to ${maxPurchase}\n\n`;
+                
+                baitOptions.push({
+                    label: baitData.name,
+                    value: `bait_${baitType}`,
+                    description: `${baitData.shop_price} coins | Stock: ${baitData.current_stock}`,
+                    emoji: baitData.emoji
+                });
+            } else {
+                baitDescription += `   ❌ Not enough coins\n\n`;
+            }
+        } else {
+            baitDescription += `${baitData.emoji} **${baitData.name}** - ❌ **OUT OF STOCK**\n\n`;
+        }
+    });
+
+    embed.addFields({
+        name: '🛒 Available Bait',
+        value: baitDescription,
+        inline: false
+    });
+
+    const resetInfo = FishingRNG.checkShopBaitReset();
+    embed.setFooter({
+        text: `Stock resets every 12 hours | Next reset: ${new Date(resetInfo.next_reset).toLocaleString()}`
+    });
+
+    if (baitOptions.length > 0) {
+        const selectMenu = new StringSelectMenuBuilder()
+            .setCustomId(`bait_buy_${userId}`)
+            .setPlaceholder('Select bait to purchase...')
+            .addOptions(baitOptions);
+
+        const row = new ActionRowBuilder().addComponents(selectMenu);
+
+        return interaction.reply({ 
+            embeds: [embed], 
+            components: [row], 
+            flags: 64 // EPHEMERAL
+        });
+    } else {
+        return interaction.reply({ 
+            embeds: [embed], 
             flags: 64 // EPHEMERAL
         });
     }
@@ -516,10 +612,86 @@ async function handleUseFromSelect(interaction, database, itemId) {
     });
 }
 
+// Function to handle bait purchase from select menu
+async function handleBaitPurchase(interaction, database, baitType) {
+    const userId = interaction.user.id;
+    const guildId = interaction.guild.id;
+    
+    // Get user's current balance
+    const economy = database.upsertEconomy(userId, guildId);
+    const userMoney = economy ? economy.money : 0;
+    
+    // Get bait information
+    const baitInfo = FishingRNG.getBaitInfo(baitType);
+    const availableBait = FishingRNG.getShopBaitStock();
+    const baitData = availableBait[baitType];
+    
+    if (!baitData || baitData.current_stock <= 0) {
+        return interaction.update({
+            content: '❌ This bait is out of stock!',
+            embeds: [],
+            components: []
+        });
+    }
+    
+    if (userMoney < baitData.shop_price) {
+        return interaction.update({
+            content: `❌ You need ${baitData.shop_price - userMoney} more coins to buy ${baitInfo.emoji} ${baitInfo.name}!`,
+            embeds: [],
+            components: []
+        });
+    }
+    
+    // Calculate maximum affordable quantity
+    const maxAffordable = Math.floor(userMoney / baitData.shop_price);
+    const maxPurchase = Math.min(maxAffordable, baitData.current_stock);
+    
+    // For now, buy 1 at a time. Could be enhanced to ask for quantity
+    const quantityToBuy = 1;
+    
+    // Purchase the bait
+    const purchaseResult = FishingRNG.purchaseBait(baitType, quantityToBuy);
+    
+    if (!purchaseResult.success) {
+        return interaction.update({
+            content: `❌ Failed to purchase bait: ${purchaseResult.message}`,
+            embeds: [],
+            components: []
+        });
+    }
+    
+    // Deduct money from user
+    database.updateMoney(userId, guildId, -purchaseResult.total_cost);
+    
+    // Add bait to user's inventory
+    FishingRNG.addBait(userId, baitType, quantityToBuy);
+    
+    const newEconomy = database.upsertEconomy(userId, guildId);
+    const newBalance = newEconomy ? newEconomy.money : 0;
+    
+    const embed = new EmbedBuilder()
+        .setTitle('🎣 Bait Purchased!')
+        .setDescription(`You successfully purchased ${quantityToBuy}x ${baitInfo.emoji} **${baitInfo.name}**!`)
+        .addFields(
+            { name: '💰 Cost', value: `${purchaseResult.total_cost} coins`, inline: true },
+            { name: '💳 New Balance', value: `${newBalance} coins`, inline: true },
+            { name: '📦 Remaining Stock', value: `${purchaseResult.remaining_stock}`, inline: true }
+        )
+        .setColor('#4CAF50')
+        .setTimestamp()
+        .setFooter({ text: 'Use this bait when fishing for better results!' });
+
+    return interaction.update({ 
+        embeds: [embed], 
+        components: [] 
+    });
+}
+
 export default {
     data,
     execute,
     handlePurchaseFromSelect,
     handleInventoryDetails,
-    handleUseFromSelect
+    handleUseFromSelect,
+    handleBaitPurchase
 };

@@ -1,0 +1,329 @@
+{
+  "fish": {
+    "common": [
+      {
+        "name": "🐟 Minnow",
+        "rarity": "common",
+        "base_chance": 70.0,
+        "value": 5,
+        "emoji": "🐟"
+      },
+      {
+        "name": "🐠 Goldfish",
+        "rarity": "common",
+        "base_chance": 45.0,
+        "value": 8,
+        "emoji": "🐠"
+      },
+      {
+        "name": "🎣 Bass",
+        "rarity": "common",
+        "base_chance": 35.0,
+        "value": 12,
+        "emoji": "🎣"
+      },
+      {
+        "name": "🐟 Carp",
+        "rarity": "common",
+        "base_chance": 30.0,
+        "value": 10,
+        "emoji": "🐟"
+      }
+    ],
+    "uncommon": [
+      {
+        "name": "🐡 Pufferfish",
+        "rarity": "uncommon",
+        "base_chance": 8.0,
+        "value": 25,
+        "emoji": "🐡"
+      },
+      {
+        "name": "🦈 Small Shark",
+        "rarity": "uncommon",
+        "base_chance": 6.0,
+        "value": 35,
+        "emoji": "🦈"
+      },
+      {
+        "name": "🐙 Octopus",
+        "rarity": "uncommon",
+        "base_chance": 4.0,
+        "value": 40,
+        "emoji": "🐙"
+      }
+    ],
+    "rare": [
+      {
+        "name": "🦑 Squid",
+        "rarity": "rare",
+        "base_chance": 2.5,
+        "value": 75,
+        "emoji": "🦑"
+      },
+      {
+        "name": "🐋 Whale",
+        "rarity": "rare",
+        "base_chance": 1.5,
+        "value": 100,
+        "emoji": "🐋"
+      },
+      {
+        "name": "🦭 Seal",
+        "rarity": "rare",
+        "base_chance": 1.0,
+        "value": 85,
+        "emoji": "🦭"
+      }
+    ],
+    "legendary": [
+      {
+        "name": "🐉 Sea Dragon",
+        "rarity": "legendary",
+        "base_chance": 0.8,
+        "value": 250,
+        "emoji": "🐉"
+      },
+      {
+        "name": "🧜‍♀️ Mermaid",
+        "rarity": "legendary",
+        "base_chance": 0.5,
+        "value": 300,
+        "emoji": "🧜‍♀️"
+      },
+      {
+        "name": "🦈 Megalodon",
+        "rarity": "legendary",
+        "base_chance": 0.3,
+        "value": 400,
+        "emoji": "🦈"
+      }
+    ],
+    "mythic": [
+      {
+        "name": "🌊 Poseidon's Trident",
+        "rarity": "mythic",
+        "base_chance": 0.1,
+        "value": 1000,
+        "emoji": "🔱"
+      },
+      {
+        "name": "💎 Crystal Fish",
+        "rarity": "mythic",
+        "base_chance": 0.05,
+        "value": 1500,
+        "emoji": "💎"
+      },
+      {
+        "name": "⭐ Starfish Supreme",
+        "rarity": "mythic",
+        "base_chance": 0.02,
+        "value": 2000,
+        "emoji": "⭐"
+      }
+    ]
+  },
+  "rods": {
+    "wooden": {
+      "name": "🪵 Wooden Rod",
+      "emoji": "🪵",
+      "common_bonus": 1.0,
+      "uncommon_bonus": 0.8,
+      "rare_bonus": 0.5,
+      "legendary_bonus": 0.2,
+      "mythic_bonus": 0.1
+    },
+    "iron": {
+      "name": "⚙️ Iron Rod",
+      "emoji": "⚙️",
+      "common_bonus": 1.1,
+      "uncommon_bonus": 1.2,
+      "rare_bonus": 0.9,
+      "legendary_bonus": 0.4,
+      "mythic_bonus": 0.2
+    },
+    "gold": {
+      "name": "🏆 Gold Rod",
+      "emoji": "🏆",
+      "common_bonus": 0.9,
+      "uncommon_bonus": 1.3,
+      "rare_bonus": 1.4,
+      "legendary_bonus": 1.0,
+      "mythic_bonus": 0.5
+    },
+    "diamond": {
+      "name": "💎 Diamond Rod",
+      "emoji": "💎",
+      "common_bonus": 0.7,
+      "uncommon_bonus": 1.0,
+      "rare_bonus": 1.5,
+      "legendary_bonus": 1.8,
+      "mythic_bonus": 2.0
+    }
+  },
+  "weather": {
+    "sunny": {
+      "name": "☀️ Sunny",
+      "emoji": "☀️",
+      "common_bonus": 1.1,
+      "uncommon_bonus": 0.9,
+      "rare_bonus": 0.8,
+      "legendary_bonus": 0.7,
+      "mythic_bonus": 0.6
+    },
+    "cloudy": {
+      "name": "☁️ Cloudy",
+      "emoji": "☁️",
+      "common_bonus": 1.0,
+      "uncommon_bonus": 1.0,
+      "rare_bonus": 1.0,
+      "legendary_bonus": 1.0,
+      "mythic_bonus": 1.0
+    },
+    "rainy": {
+      "name": "🌧️ Rainy",
+      "emoji": "🌧️",
+      "common_bonus": 0.8,
+      "uncommon_bonus": 1.1,
+      "rare_bonus": 1.3,
+      "legendary_bonus": 1.4,
+      "mythic_bonus": 1.5
+    },
+    "stormy": {
+      "name": "⛈️ Stormy",
+      "emoji": "⛈️",
+      "common_bonus": 0.6,
+      "uncommon_bonus": 1.0,
+      "rare_bonus": 1.5,
+      "legendary_bonus": 1.8,
+      "mythic_bonus": 2.2
+    },
+    "foggy": {
+      "name": "🌫️ Foggy",
+      "emoji": "🌫️",
+      "common_bonus": 1.2,
+      "uncommon_bonus": 1.1,
+      "rare_bonus": 0.9,
+      "legendary_bonus": 0.8,
+      "mythic_bonus": 0.7
+    }
+  },
+  "bait": {
+    "worm": {
+      "name": "🪱 Worm",
+      "emoji": "🪱",
+      "common_bonus": 1.0,
+      "uncommon_bonus": 1.0,
+      "rare_bonus": 1.0,
+      "legendary_bonus": 1.0,
+      "mythic_bonus": 1.0,
+      "shop_price": 0,
+      "shop_stock": 0,
+      "description": "Basic bait for fishing"
+    },
+    "cricket": {
+      "name": "🦗 Cricket",
+      "emoji": "🦗",
+      "common_bonus": 1.1,
+      "uncommon_bonus": 1.2,
+      "rare_bonus": 0.9,
+      "legendary_bonus": 0.8,
+      "mythic_bonus": 0.7,
+      "shop_price": 25,
+      "shop_stock": 15,
+      "description": "Great for common and uncommon fish"
+    },
+    "minnow": {
+      "name": "🐟 Minnow Bait",
+      "emoji": "🐟",
+      "common_bonus": 0.8,
+      "uncommon_bonus": 1.1,
+      "rare_bonus": 1.3,
+      "legendary_bonus": 1.1,
+      "mythic_bonus": 0.9,
+      "shop_price": 50,
+      "shop_stock": 10,
+      "description": "Attracts mid-tier fish"
+    },
+    "shrimp": {
+      "name": "🦐 Shrimp",
+      "emoji": "🦐",
+      "common_bonus": 0.7,
+      "uncommon_bonus": 0.9,
+      "rare_bonus": 1.4,
+      "legendary_bonus": 1.5,
+      "mythic_bonus": 1.2,
+      "shop_price": 100,
+      "shop_stock": 8,
+      "description": "Premium bait for rare fish"
+    },
+    "squid": {
+      "name": "🦑 Squid Bait",
+      "emoji": "🦑",
+      "common_bonus": 0.5,
+      "uncommon_bonus": 0.7,
+      "rare_bonus": 1.2,
+      "legendary_bonus": 1.8,
+      "mythic_bonus": 2.0,
+      "shop_price": 250,
+      "shop_stock": 5,
+      "description": "Elite bait for legendary catches"
+    },
+    "magic_lure": {
+      "name": "✨ Magic Lure",
+      "emoji": "✨",
+      "common_bonus": 0.3,
+      "uncommon_bonus": 0.5,
+      "rare_bonus": 1.0,
+      "legendary_bonus": 2.0,
+      "mythic_bonus": 3.0,
+      "shop_price": 500,
+      "shop_stock": 2,
+      "description": "Mythical bait for the rarest fish"
+    }
+  },
+  "shop_settings": {
+    "bait_reset_hours": 12,
+    "last_bait_reset": null
+  },
+  "starting_bait": {
+    "worm": 10
+  },
+  "daily_rewards": {
+    "bait": {
+      "worm": 10
+    }
+  },
+  "modifiers": {
+    "luck_potion": {
+      "common_bonus": 1.2,
+      "uncommon_bonus": 1.3,
+      "rare_bonus": 1.5,
+      "legendary_bonus": 1.8,
+      "mythic_bonus": 2.5
+    },
+    "minimum_chance": 0.1,
+    "base_fishing_cooldown": 30000
+  },
+  "rarity_colors": {
+    "common": "#95A5A6",
+    "uncommon": "#27AE60",
+    "rare": "#3498DB",
+    "legendary": "#9B59B6",
+    "mythic": "#F1C40F"
+  },
+  "messages": {
+    "fishing_start": [
+      "🎣 You cast your line into the water...",
+      "🌊 You wait patiently for a bite...",
+      "🎣 Something tugs on your line!",
+      "🌊 You feel a bite!"
+    ],
+    "no_fish": [
+      "🎣 The fish got away!",
+      "🌊 Nothing bit today...",
+      "🎣 Better luck next time!",
+      "🌊 The waters seem empty..."
+    ]
+  }
+}
